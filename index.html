@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>NodaMoney by remyvd</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>NodaMoney</h1>
+        <h2>NodaMoney provides a library that treats Money as a first class citizen and handles all the ugly bits like currencies and formatting. </h2>
+        <a href="https://github.com/remyvd/NodaMoney" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="nodamoney" class="anchor" href="#nodamoney" aria-hidden="true"><span class="octicon octicon-link"></span></a>NodaMoney</h1>
+
+<p>You can get the latest stable release from the <a href="https://www.nuget.org/packages/NodaMoney">official Nuget.org feed</a> or from our
+<a href="https://github.com/remyvd/NodaMoney/releases">github releases page</a>.</p>
+
+<p>If you'd like to work with the bleeding edge, you can use our <a href="https://ci.appveyor.com/nuget/nodamoney-pmrx3j3p32f2">custom Nuget feed</a>.
+Packages on this feed are pre-release and, while they've passed all our tests, are not yet ready for production.</p>
+
+<h2>
+<a id="about" class="anchor" href="#about" aria-hidden="true"><span class="octicon octicon-link"></span></a>About</h2>
+
+<p>NodaMoney provides a library that treats Money as a first class citizen in .NET and handles all the ugly bits like currencies
+and formatting.</p>
+
+<p>We have the <a href="http://msdn.microsoft.com/en-us/library/364x0z75.aspx">decimal type</a> in .NET to store an amount of money, which can
+be used for very basic things. But it's still a numeric value without knowledge about its currency, major and minor units, 
+formatting, etc. The .NET Framework has the System.Globalization namespace that helps with formatting of money in different cultures and regions,
+but it only captures some info about currencies, but not everything.</p>
+
+<p>There is also some business logic surronding money, like dividing without losing pennies (like in the movie <a href="http://www.imdb.com/title/tt0151804/">Office Space</a>),
+conversion, etc. that motivates to have a Money type that contains all the domain logic, like Martin Fowler already descibed in
+his book <a href="http://martinfowler.com/eaaCatalog/money.html">Patterns of Enterprise Application Architecture</a></p>
+
+<p>NodaMoney represents the .NET counterpart of java library <a href="http://www.joda.org/joda-money/">JodaMoney</a>, like NodaTime is the .NET
+counterpart of JodaTime. NodaMoney does not provide, nor is it intended to provide, monetary algorithms beyond the most basic and 
+obvious. This is because the requirements for these algorithms vary widely between domains. This library is intended to act as the
+base layer, providing classes that should be in the .NET Framework. It complies with the currencies in <a href="http://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a>.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>At the moment there are three classes:</p>
+
+<ul>
+<li>Currency: An immutable structure that represents a currency. It can give all ISO 4217 currencies.</li>
+<li>Money: An immutable structure that represents money in a specified currency.</li>
+<li>ExchangeRate: A stucture that represents a <a href="http://en.wikipedia.org/wiki/Currency_pair">currency pair</a> that can convert money
+from one currency to another currency.</li>
+</ul>
+
+<p><strong>Initalizing money</strong></p>
+
+<div class="highlight highlight-C#"><pre><span class="pl-c">// define money with explicit currency</span>
+<span class="pl-k">var</span> euros = <span class="pl-s">new</span> Money(<span class="pl-c1">6.</span>54m, Currency.FromCode(<span class="pl-s1"><span class="pl-pds">"</span>EUR<span class="pl-pds">"</span></span>));
+<span class="pl-k">var</span> euros = <span class="pl-s">new</span> Money(<span class="pl-c1">6.</span>54m, <span class="pl-s1"><span class="pl-pds">"</span>EUR<span class="pl-pds">"</span></span>);
+
+<span class="pl-c">// define money explicit using helper method for most used currencies in the world</span>
+<span class="pl-k">var</span> euros = Money.Euro(<span class="pl-c1">6.</span>54m);
+<span class="pl-k">var</span> euros = Money.USDollar(<span class="pl-c1">6.</span>54m);
+<span class="pl-k">var</span> euros = Money.PoundSterling(<span class="pl-c1">6.</span>54m);
+<span class="pl-k">var</span> euros = Money.Yen(<span class="pl-c1">6</span>);
+
+<span class="pl-c">// define money implicit using currency of current culture/region</span>
+<span class="pl-k">var</span> money = <span class="pl-s">new</span> Money(<span class="pl-c1">6.</span>54m);
+Money money = <span class="pl-c1">6.</span>54m;
+Money money = <span class="pl-c1">6</span>;
+Money money = (Money)<span class="pl-c1">6.54</span>; <span class="pl-c">// need explict cast from double data type  </span>
+
+<span class="pl-c">// auto-rounding to the minor unit will take place with MidpointRounding.ToEven</span>
+<span class="pl-c">// also known as banker's rounding </span>
+<span class="pl-k">var</span> euro = <span class="pl-s">new</span> Money(<span class="pl-c1">765.</span>425m, <span class="pl-s1"><span class="pl-pds">"</span>EUR<span class="pl-pds">"</span></span>); <span class="pl-c">// EUR 765.42</span>
+<span class="pl-k">var</span> euro = <span class="pl-s">new</span> Money(<span class="pl-c1">765.</span>425m, <span class="pl-s1"><span class="pl-pds">"</span>EUR<span class="pl-pds">"</span></span>, MidpointRounding.AwayFromZero); <span class="pl-c">// EUR 765.43</span></pre></div>
+
+<p><strong>Money operations</strong></p>
+
+<div class="highlight highlight-C#"><pre><span class="pl-k">var</span> euro10 = Money.Euro(<span class="pl-c1">10</span>);
+<span class="pl-k">var</span> euro20 = Money.Euro(<span class="pl-c1">20</span>);
+<span class="pl-k">var</span> dollar10 = Money.USDollar(<span class="pl-c1">10</span>);
+
+<span class="pl-c">// add and substract</span>
+<span class="pl-k">var</span> euro30 = euro10 + euro20;
+<span class="pl-k">var</span> euro10 = euro20 - euro10;
+<span class="pl-k">var</span> m = euro10 + dollar10; <span class="pl-c">// will throw exception!</span>
+euro10 += euro20;
+euro10 -= euro20;
+
+<span class="pl-c">// compare money</span>
+euro10 == euro20; <span class="pl-c">// false</span>
+euro10 != euro20; <span class="pl-c">// true;</span>
+euro10 == dollar10; <span class="pl-c">// false;</span>
+euro20 &gt; euro10; <span class="pl-c">// true;</span>
+euro10 &lt;= dollar10; <span class="pl-c">// will throw exception!</span>
+
+<span class="pl-c">// decrement and increment by minor unit</span>
+<span class="pl-k">var</span> yen = <span class="pl-s">new</span> Money(765m, <span class="pl-s1"><span class="pl-pds">"</span>JPY<span class="pl-pds">"</span></span>); <span class="pl-c">// the smallest unit is 1 yen</span>
+<span class="pl-k">var</span> euro = <span class="pl-s">new</span> Money(<span class="pl-c1">765.</span>43m, <span class="pl-s1"><span class="pl-pds">"</span>EUR<span class="pl-pds">"</span></span>);
+++yen; <span class="pl-c">// JPY 766</span>
+--yen; <span class="pl-c">// JPY 765</span>
+++euro; <span class="pl-c">// EUR 765.44</span>
+--euro; <span class="pl-c">// EUR 765.43</span></pre></div>
+
+<p><strong>Money formatting</strong></p>
+
+<div class="highlight highlight-C#"><pre><span class="pl-k">var</span> yen = <span class="pl-s">new</span> Money(765m, <span class="pl-s1"><span class="pl-pds">"</span>JPY<span class="pl-pds">"</span></span>);
+<span class="pl-k">var</span> euro = <span class="pl-s">new</span> Money(<span class="pl-c1">765.</span>43m, <span class="pl-s1"><span class="pl-pds">"</span>EUR<span class="pl-pds">"</span></span>);
+<span class="pl-k">var</span> dollar = <span class="pl-s">new</span> Money(<span class="pl-c1">765.</span>43m, <span class="pl-s1"><span class="pl-pds">"</span>USD<span class="pl-pds">"</span></span>);
+<span class="pl-k">var</span> dinar = <span class="pl-s">new</span> Money(<span class="pl-c1">765.</span>432m, <span class="pl-s1"><span class="pl-pds">"</span>BHD<span class="pl-pds">"</span></span>);
+
+<span class="pl-c">// Implicit when current culture is 'en-US'</span>
+yen.ToString();    <span class="pl-c">// "¥765"</span>
+euro.ToString();   <span class="pl-c">// "€765.43"</span>
+dollar.ToString(); <span class="pl-c">// "$765.43"</span>
+dinar.ToString();  <span class="pl-c">// "BD765.432"</span>
+
+yen.ToString(<span class="pl-s1"><span class="pl-pds">"</span>C2<span class="pl-pds">"</span></span>);    <span class="pl-c">// "¥765.00"</span>
+euro.ToString(<span class="pl-s1"><span class="pl-pds">"</span>C2<span class="pl-pds">"</span></span>);   <span class="pl-c">// "€765.43"</span>
+dollar.ToString(<span class="pl-s1"><span class="pl-pds">"</span>C2<span class="pl-pds">"</span></span>); <span class="pl-c">// "$765.43"</span>
+dinar.ToString(<span class="pl-s1"><span class="pl-pds">"</span>C2<span class="pl-pds">"</span></span>);  <span class="pl-c">// "BD765.43"</span>
+
+<span class="pl-c">// Implicit when current culture is 'nl-BE'</span>
+yen.ToString();    <span class="pl-c">// "¥ 765"</span>
+euro.ToString();   <span class="pl-c">// "€ 765,43"</span>
+dollar.ToString(); <span class="pl-c">// "$ 765,43"</span>
+dinar.ToString();  <span class="pl-c">// "BD 765,432"</span>
+
+<span class="pl-c">// Implicit when current culture is 'fr-BE'</span>
+yen.ToString();    <span class="pl-c">// "765 ¥"</span>
+euro.ToString();   <span class="pl-c">// "765,43 €"</span>
+dollar.ToString(); <span class="pl-c">// "765,43 $"</span>
+dinar.ToString();  <span class="pl-c">// "765,432 BD"</span>
+}
+
+<span class="pl-c">// Explicit format for culture 'nl-NL'</span>
+<span class="pl-k">var</span> ci = <span class="pl-s">new</span> CultureInfo(<span class="pl-s1"><span class="pl-pds">"</span>nl-NL<span class="pl-pds">"</span></span>);
+
+yen.ToString(ci);    <span class="pl-c">// "¥ 765"</span>
+euro.ToString(ci);   <span class="pl-c">// "€ 765,43"</span>
+dollar.ToString(ci); <span class="pl-c">// "$ 765,43"</span>
+dinar.ToString(ci);  <span class="pl-c">// "BD 765,432"</span></pre></div>
+
+<h2>
+<a id="support--contributing" class="anchor" href="#support--contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support &amp; Contributing</h2>
+
+<p>For support, bugs and new ideas use <a href="https://github.com/remyvd/NodaMoney/issues">GitHub issues</a>. Please see our
+<a href="CONTRIBUTING.md">guidelines</a> for contributing to the NodaMoney.</p>
+
+<p>Build status: <a href="https://ci.appveyor.com/project/remyvd/nodamoney"><img src="https://ci.appveyor.com/api/projects/status/o656q9bagslgusj9?svg=true" alt="Build status"></a></p>
+
+<p><a href="https://zenhub.io"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png" height="18px"></a></p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/remyvd/NodaMoney/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/remyvd/NodaMoney/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/remyvd/NodaMoney"></a> is maintained by <a href="https://github.com/remyvd">remyvd</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
