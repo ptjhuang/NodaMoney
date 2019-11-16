@@ -119,6 +119,9 @@ namespace NodaMoney
         /// </returns>
         public int CompareTo(Money other)
         {
+            if (Currency == default || other.Currency == default)
+                return Amount.CompareTo(other.Amount);
+
             AssertIsSameCurrency(this, other);
             return Amount.CompareTo(other.Amount);
         }

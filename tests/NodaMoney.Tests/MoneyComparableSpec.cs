@@ -6,6 +6,8 @@ namespace NodaMoney.Tests.MoneyComparableSpec
 {
     public class GivenIWantToCompareMoney
     {
+        private Money _default = default(Money);
+        private Money _zeroEuro = new Money(0m, "EUR");
         private Money _tenEuro1 = new Money(10.00m, "EUR");
         private Money _tenEuro2 = new Money(10.00m, "EUR");
         private Money _twentyEuro = new Money(20.00m, "EUR");
@@ -54,10 +56,25 @@ namespace NodaMoney.Tests.MoneyComparableSpec
             (_tenEuro1 == _twentyDollar).Should().BeFalse(); //using Euality operators
             (_tenEuro1 != _twentyDollar).Should().BeTrue(); //using Euality operators
             _tenEuro1.GetHashCode().Should().NotBe(_twentyDollar.GetHashCode()); //using GetHashCode()
+
+            (_tenEuro1 == default).Should().BeFalse();
+            (_tenEuro1 != default).Should().BeTrue();
+            (_tenEuro1.Equals(default)).Should().BeFalse();
+            (_zeroEuro.Equals(default)).Should().BeTrue();
+            (_tenEuro1.CompareTo(default)).Should().NotBe(0);
         }
 
         [Fact]
         public void WhenComparingWithNull_ThenMoneyShouldNotBeEqual()
+        {
+            (_default == null).Should().BeFalse();
+            (_default == 0).Should().BeTrue();
+            _default.CompareTo(null).Should().NotBe(0);
+            _default.CompareTo(0).Should().Be(0);
+        }
+
+        [Fact]
+        public void WhenComparingWith0_ThenMoneyShouldNotBeEqual()
         {
             (_tenEuro1 == null).Should().BeFalse();
             _tenEuro1.CompareTo(null).Should().Be(1);
