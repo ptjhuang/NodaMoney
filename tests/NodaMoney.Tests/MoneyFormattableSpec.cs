@@ -14,6 +14,7 @@ namespace NodaMoney.Tests.MoneyFormattableSpec
         private Money _euro = new Money(765.4321m, Currency.FromCode("EUR"));
         private Money _dollar = new Money(765.4321m, Currency.FromCode("USD"));
         private Money _dinar = new Money(765.4321m, Currency.FromCode("BHD"));
+        private Money _xdr = new Money(765.4321m, Currency.FromCode("XDR"));
 
         [Fact]
         [UseCulture("en-US")]
@@ -23,6 +24,7 @@ namespace NodaMoney.Tests.MoneyFormattableSpec
             _euro.ToString().Should().Be("€765.43");
             _dollar.ToString().Should().Be("$765.43");
             _dinar.ToString().Should().Be("BD765.432");
+            _xdr.ToString().Should().Be("¤765.43");
         }
 
         [Fact]
@@ -34,6 +36,7 @@ namespace NodaMoney.Tests.MoneyFormattableSpec
             _euro.ToString().Should().Be("€ 765,43");
             _dollar.ToString().Should().Be("$ 765,43");
             _dinar.ToString().Should().Be("BD 765,432");
+            _xdr.ToString().Should().Be("¤ 765,43");
         }
 
         [Fact]
@@ -45,6 +48,7 @@ namespace NodaMoney.Tests.MoneyFormattableSpec
             _euro.ToString().Should().Be("765,43 €");
             _dollar.ToString().Should().Be("765,43 $");
             _dinar.ToString().Should().Be("765,432 BD");
+            _xdr.ToString().Should().Be("765,43 ¤");
         }
 
         [Fact]
@@ -65,6 +69,7 @@ namespace NodaMoney.Tests.MoneyFormattableSpec
             _euro.ToString(ci).Should().Be("€ 765,43");
             _dollar.ToString(ci).Should().Be("$ 765,43");
             _dinar.ToString(ci).Should().Be("BD 765,432");
+            _xdr.ToString(ci).Should().Be("¤ 765,43");
         }
 
         [Fact]
@@ -77,6 +82,7 @@ namespace NodaMoney.Tests.MoneyFormattableSpec
             _euro.ToString(nfi).Should().Be("€ 765,43");
             _dollar.ToString(nfi).Should().Be("$ 765,43");
             _dinar.ToString(nfi).Should().Be("BD 765,432");
+            _xdr.ToString(nfi).Should().Be("¤ 765,43");
         }
 
         [Fact]

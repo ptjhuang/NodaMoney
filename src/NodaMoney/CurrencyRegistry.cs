@@ -275,7 +275,7 @@ namespace NodaMoney
                 ["ISO-4217::XBC"] = new Currency("XBC", "957", NotApplicable, "European Unit of Account 9 (E.U.A.-9) (bond market unit)", Currency.GenericCurrencySign),
                 ["ISO-4217::XBD"] = new Currency("XBD", "958", NotApplicable, "European Unit of Account 17 (E.U.A.-17) (bond market unit)", Currency.GenericCurrencySign),
                 ["ISO-4217::XCD"] = new Currency("XCD", "951", 2, "East Caribbean dollar", "$"), // or EC$
-                ["ISO-4217::XDR"] = new Currency("XDR", "960", NotApplicable, "Special drawing rights", Currency.GenericCurrencySign),
+                ["ISO-4217::XDR"] = new Currency("XDR", "960", 2, "Special drawing rights", Currency.GenericCurrencySign),
                 ["ISO-4217::XOF"] = new Currency("XOF", "952", 0, "CFA franc BCEAO", "CFA"),
                 ["ISO-4217::XPD"] = new Currency("XPD", "964", NotApplicable, "Palladium (one troy ounce)", Currency.GenericCurrencySign),
                 ["ISO-4217::XPF"] = new Currency("XPF", "953", 0, "CFP franc", "F"),
